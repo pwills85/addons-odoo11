@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+      <template id="l10n_cl_fe.dte_external_layout">
+            <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+    <style>
+      .table{
+      margin-bottom:0px !important;
+      }
+    </style>
+<!-- Multicompany -->
+              <t t-if="not o and doc">
+                  <t t-set="o" t-value="doc"/>
+              </t>
+
+              <t t-if="o and 'company_id' in o">
+                  <t t-set="company" t-value="o.company_id.sudo()"/>
+              </t>
+              <t t-if="not o or not 'company_id' in o">
+                  <t t-set="company" t-value="res_company"/>
+              </t>
+              <t t-if="'journal_document_class_id' in o and o.journal_document_class_id">
+              	<t t-set="document_class_id" t-value="o.journal_document_class_id.sii_document_class_id"/>
+              </t>
+                  <t t-set="partner_id" t-value="o.partner_id"/>
+                  <t t-set="commercial_partner_id" t-value="o.partner_id.commercial_partner_id"/>
+                  <t t-set="logo" t-value="company.logo"/>
+                  <t t-set="sii_document_number" t-value="o.sii_document_number"/>
+                  <t t-if="o.type in ['in_invoice', 'in_refund']">
+                  <t t-set="partner_id" t-value="company.partner_id"/>
+                  <t t-set="commercial_partner_id" t-value="company.partner_id"/>
+                  <t t-set="company" t-value="o.partner_id"/>
+                  <t t-set="logo" t-value="o.partner_id.image"/>
+                  <t t-set="sii_document_number" t-value="o.reference"/>
+              </t>
+              <div class="header">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <p>
+                            <span t-field="o.company_id.partner_id.ref"/>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                	<div class="col-xs-3" style="height: 160px; padding-left: 0; padding-right: 0;">
+                    	<img t-if="logo" t-att-src="'data:image/png;base64,%s' % to_text(logo)" style="max-width: 235px;margin-top: -30px;"/>
+                  </div>
+                    <div class="col-xs-5" style="text-align:left; height: 160px; font-family:Arial">
+                        <h4 style="text-transform:uppercase; color:black;">
+                            <strong t-field="company.name"/>
+                        </h4>
+                        <h6 style="color:DimGray;">
+                            <t t-if="company.activity_description">
+                            	<span>Giro     : </span><span t-field="company.activity_description.name"/><br/>
+                            </t>
+                                <!-- domicilios -->
+                            <span>Dirección: </span><span t-field="company.street"/>, <span t-field="company.city_id.name"/><br/>
+                                <!-- domicilios -->
+                            <span>Teléfono :</span><span t-field="company.phone"/><br/>
+                            <span>E-mail   : </span><span t-field="company.email"/><br/>
+                            <span>Web      : </span><span t-field="company.website" style="color:Blue;"/>
+                        </h6>
+                    </div>
+                    <div class="col-xs-4 pull-right" style="height: 160px; margin-right: -15px;">
+                        <div style="position:relative;border: 3px solid black;text-align: center;padding-bottom:0px !important; height:130px;">
+                          <h4 style="color:black; font-family:Arial;">
+                              R.U.T.: <span t-field="company.document_number"/>
+                          </h4>
+                          <h6 name="document_class_id" t-if="document_class_id" style="color:black; font-family:Arial; text-transform:uppercase; ">
+                             <span t-field="document_class_id.name"/>
+                          </h6>
+                          <h4 t-if="sii_document_number" style="color:black; font-family:Arial;">
+                              N° <span t-esc="sii_document_number"/>
+                          </h4>
+                          <br/>
+                      </div>
+                      <div class="row" style="text-align: center; margin-top:0px !important; padding-top:0px!important;">
+                          <h6 style="color:black; text-transform:uppercase;">
+                              SII - <span t-field="o.company_id.sii_regional_office_id.name"/>
+                          </h6>
+                      </div>
+                    </div>
+                </div>
+                <div class="row" style="display:none !important;">
+                  <div name="company_address"/>
+                </div>
+            </div>
+            <div class="article" style="position:relative; height: 910px; margin-left: -15px; top:15px; padding-top:0px; padding-left: 0; padding-right: 0;">
+              <t t-if="'date_invoice' in o and o.date_invoice">
+                  <strong>Fecha Emisión: </strong><strong t-field="o.date_invoice" t-options ='{"format": "dd MMMM yyyy"}'/>
+              </t>
+              <div class="page" style="position:relative; height:100%">
+                  <div class="row" style="border: 1px solid black; margin-left: 0px; border-radius: 7px 7px 7px 7px; padding:3px;">
+                      <table class="table cl_invoice" style="margin-bottom:0px !important;">
+                        <tbody>
+                          <tr style="max-height:15px; font-size:12px !important;">
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Señor (es):</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;min-width:400px;max-width:400px;">
+                                <span t-field="commercial_partner_id.name"/>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Comuna:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <span t-field="partner_id.city_id.name"/>
+                            </td>
+                          </tr>
+                          <tr style="max-height:15px; font-size:12px !important;">
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>RUT:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;min-width:400px;max-width:400px;">
+                                <span t-field="commercial_partner_id.document_number"/>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Ciudad:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <span t-field="partner_id.city"/>
+                            </td>
+                          </tr>
+                          <tr style="max-height:15px; font-size:12px !important;">
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Domicilio:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;min-width:400px;max-width:400px;">
+                                <span t-field="partner_id.street"/><span t-field="partner_id.street2"/>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Condición de Pago:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <span t-if="o.forma_pago" t-field="o.forma_pago"/>
+                            </td>
+                          </tr>
+                          <tr style="max-height:15px; font-size:12px !important;">
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Giro:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;min-width:400px;max-width:400px;">
+                                <span t-field="commercial_partner_id.activity_description.name"/>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Vencimiento:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <span t-field="o.date_due" t-options ='{"format": "dd MMMM yyyy"}'/>
+                            </td>
+                          </tr>
+                          <tr style="max-height:15px; font-size:12px !important;">
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Contacto:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;min-width:400px;max-width:400px;">
+                              <t t-if="'contact_id' in o and o.contact_id">
+                                  <span t-field="o.contact_id.name"/>
+                              </t>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <strong>Vendedor:</strong>
+                            </td>
+                            <td style="border-top:0px !important;padding:0px !important;">
+                                <span t-field="o.user_id"/>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <t t-if="o.referencias">
+                       <div class="row" style="max-height: 75px; margin-top:5px; margin-left: 0px; border: 1px solid black; border-radius: 7px 7px 7px 7px; padding:3px;" name="reference">
+                        <table class="table table-condensed" style="padding:3px;">
+                        	<thead>
+                            	<th style="line-height:5px; text-align: center; font-family:Arial; font-size:12px; background-color: #E97300;color: white; border-radius: 5px 5px 0px 0px;" colspan="4" >REFERENCIAS A OTROS DOCUMENTOS</th>
+                            </thead>
+                          	<thead>
+                              <th style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px; background-color: #E97300;color: white;">
+                                <strong>Tipo de Documento</strong>
+                              </th>
+                              <th style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px; background-color: #E97300;color: white;">
+                                <strong>Folio</strong>
+                              </th>
+                              <th style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px; background-color: #E97300;color: white;">
+                                <strong>Fecha del documento</strong>
+                              </th>
+                              <th style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px; background-color: #E97300;color: white;">
+                                <strong>Motivo/observación</strong>
+                              </th>
+                          </thead>
+                          <tbody t-if="'referencias' in o and o.referencias">
+                            <t t-foreach="o.referencias" t-as="l">
+                                <tr>
+                                  	<td style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px;">
+                                      	<span t-if="l.sii_referencia_TpoDocRef" t-field="l.sii_referencia_TpoDocRef.name"/>
+                                  	</td>
+                                  	<td style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px;">
+                                        <span t-if="l.origen" t-field="l.origen"/>
+                                    </td>      
+                                  	<td style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px;">
+                                    	<span t-if="l.fecha_documento" t-field="l.fecha_documento"/>
+                                  	</td>                                                                	
+                                  	<td name="reference" style="border: 1px solid LightGray; max-height:8px; line-height:5px; text-align: center; font-family:Arial; font-size:12px;">
+                                    	<t t-if="l.sii_referencia_CodRef"><span t-esc="l.sii_referencia_CodRef[0]"/> <span t-field="l.sii_referencia_CodRef"/>: 	</t><span t-if="l.motivo" t-field="l.motivo"/>
+                                  	</td>
+                              </tr>
+                            </t>
+                        </tbody>
+                        </table>
+                    </div>
+                  </t>
+                  <!-- Is there a discount on at least one line? -->
+                  <div style="position:relative; height:465px; top:5px; margin-left: 0px; margin-right: -15px; border: 1px solid black; border-radius: 7px 7px 7px 7px; padding:3px;">
+                   <t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
+
+                   <table class="table table-condensed">
+                       <thead>
+                           <tr style="line-height:12px; background-color: #E97300;color: white;">
+                              <th style="width: 5% !important;border-top:0px !important; text-align: center; font-family:Arial; font-size:12px; border-radius: 5px 0px 0px 0px;">Item</th>
+                              <th style="border: 1px solid LightGray; border-top:0px !important;text-align: center; font-family:Arial; font-size:12px;">Cantidad</th>
+                              <th style="border: 1px solid LightGray; border-top:0px !important; text-align: center; font-family:Arial; font-size:12px;">Descripción</th>
+                              <th style="border: 1px solid LightGray; border-top:0px !important; text-align: center; font-family:Arial; font-size:12px;">Precio Unitario</th>
+                              <th t-if="display_discount" style="border: 1px solid LightGray; border-top:0px !important; text-align: center; font-family:Arial; font-size:12px;" groups="sale.group_discount_per_so_line">Desc.(%)</th>
+                              <th style="border-top:0px !important; text-align: center; font-family:Arial; font-size:12px; border-radius: 0px 5px 0px 0px;">Precio</th>
+                           </tr>
+                       </thead>
+                       <tbody class="invoice_tbody">
+                           <t t-set="counter" t-value="0"/>
+                           <tr t-foreach="o.invoice_line_ids" t-as="l" style="max-height:8px;line-height:10px !important; font-size:12px !important;">
+                               <t t-set="counter" t-value="counter +1"/>
+                               <td style="border: 1px solid LightGray; border-top:0px; padding:0px 0px !important; text-align: center; font-family:Arial; font-size:10px;"> <t t-esc="counter"/></td>
+                               <td style="border: 1px solid LightGray; max-height:8px;line-height:10px !important; text-align: center; font-family:Arial; font-size:10px;">
+                                   <span t-field="l.quantity"/>
+                                   <span t-field="l.uom_id" groups="product.group_uom" style="font-family:Arial; font-size:8px;"/>
+                               </td>
+                               <td style="border: 1px solid LightGray; max-height:8px;line-height:10px !important; text-align: left; font-family:Arial; font-size:10px;"><span t-field="l.name"/></td>
+                               <td style="border: 1px solid LightGray; max-height:8px;line-height:10px !important; text-align: right; font-family:Arial; font-size:10px;">
+                                   <span t-field="l.price_unit" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                               </td>
+                               <td t-if="display_discount"  groups="sale.group_discount_per_so_line" style="border: 1px solid LightGray; max-height:8px;line-height:10px !important; text-align: center; font-family:Arial; font-size:11px;">
+                                   <span t-field="l.discount"/>
+                               </td>
+                               <td style="border: 1px solid LightGray; max-height:8px;line-height:10px !important; text-align: right; font-family:Arial; font-size:11px;">
+                                    <span t-field="l.price_subtotal" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                               </td>
+                           </tr>
+                       </tbody>
+                   </table>
+                  </div>
+                  <div class="row" style="position:relative; margin-left: 5px; top:5px; padding-top:2px; padding-left: 0; padding-right: 0;">
+                      <span style="color:gray; font-family:Arial; font-size:12px; text-align: left">  Depositar o transferir a Banco Santander, Cuenta Corriente 70826089, a Nombre de EERGYGROUP SpA, R.U.T. 76.489.218-6</span>
+                  </div>                  
+                  <!-- <t t-if="o.comment">
+                   		<div class="col-xs-12" style="position:relative; top:5px; max-height: 80px;">
+                   			<strong style="text-align: left; font-family:Arial; font-size:9px;">Nota:</strong>
+                       		<span t-field="o.comment" style="text-align: left; font-family:Arial; font-size:9px;"/>
+                   		</div>
+                   </t>-->
+                   
+                <div class="row" style="position: absolute; margin-left: 0px; bottom: 0px;">
+                      <div class="col-xs-4" style="top:5px; padding: 0px;">
+                           <span style="width: 100px; padding: 0px 0px 0px 0px;" t-field="o.sii_barcode_img" t-field-options="{&quot;widget&quot;: &quot;image&quot;}"/>
+                           <p style="text-align:center;color:black; font-size:8px;">
+                              Timbre Electrónico SII
+                              <br/>
+                              Resolución <t t-esc="o.company_id.dte_resolution_number"/> de <t t-esc="o.company_id.dte_resolution_date[:4]"/> Verifique documento: www.sii.cl
+                            </p>
+                      </div>
+	             <style>
+  							.datagrid table { border-collapse: collapse; text-align: left; width: 100%; } 
+  							.datagrid {font: normal 12px/150% Arial, Helvetica, sans-serif; background: #fff; overflow: hidden; border: 2px solid #8C8C8C; -webkit-border-radius: 9px; -moz-border-radius: 9px; border-radius: 9px; }
+  							.datagrid table td, 
+  							.datagrid table th { padding: 7px 10px; }
+  							.datagrid table tbody td { color: #454545; border-left: 1px solid #7D7D7D;font-size: 13px;border-bottom: 1px solid #7D7D7D;font-weight: bold; }
+  							.datagrid table tbody td:first-child { border-left: none; }
+  							.datagrid table tbody tr:last-child td { border-bottom: none; }
+			    		</style>
+              <div class="col-xs-4" style="height: 180px; top:5px">
+	             <t t-if="cedible">
+		            <div class="datagrid">
+	               <table>
+								  <tbody>
+									<tr>
+										<td style="width:20%; background-color: #E97300;color: white;">
+											<strong style="text-align:left; font-size:10px !important;">NOMBRE:</strong>
+										</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="width:20%; background-color: #E97300;color: white;">
+											<strong style="text-align:left; font-size:10px !important;">R.U.T.:</strong>
+										</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="width:20%; background-color: #E97300;color: white;">
+											<strong style="text-align:left; font-size:10px !important;">FECHA:</strong>
+										</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="width:20%; background-color: #E97300;color: white;">
+											<strong style="text-align:left; font-size:10px !important;">RECINTO:</strong>
+										</td>
+										<td></td>
+									</tr>
+									<tr>
+										<td style="width:20%; background-color: #E97300;color: white;">
+											<strong style="text-align:left; font-size:10px !important;">FIRMA:</strong>
+										</td>
+										<td>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2">
+											<span style="text-align:left; font-size:8px !important;">"El acuse de recibo que se declara en este acto, de acuerdo a lo dispuesto en la letra b) del Artículo 4°, y la letra c) del Artículo 5° de la Ley 19.983, acredita que la entrega de mercaderías o servicio(s) prestado(s) ha(n) sido recibido(s)"</span>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+							</div>                                
+	             </t>
+                  </div>
+                  <div id="total" class="col-xs-4 pull-right" style="height: 180px; top:5px; margin-right: -15px; border-radius: 5px 5px 5px 5px;">
+                          <table class="table table-condensed">
+                              <t t-if="o.global_descuentos_recargos">
+                                <tr t-foreach="o.global_descuentos_recargos" t-as="gdr" class="border-black" style="max-height:11px; font-size:13px !important; background-color: #E97300;color: white;">
+                                  <td><strong>Descuento o Recargo Global</strong></td>
+                                  <td class="text-right">
+                                      <span t-esc="gdr.valor if gdr.gdr_type=='amount' else gdr.amount_untaxed_global_dr" t-esc-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                  </td>
+                                </tr>
+                              </t>
+                              <tr style="line-height:12px; max-height:11px; font-size:13px !important; background-color: #E97300;color: white; text-align: left; font-family:Arial; border-radius: 5px 5px 0px 0px;" name="subtotal">
+                                  <td><strong>Subtotal</strong></td>
+                                  <td class="text-right">
+                                      <span t-field="o.amount_untaxed" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                  </td>
+                              </tr>
+                              <tr name="discount" t-if="display_discount" class="border-black" style="line-height:12px; max-height:11px;  !important; background-color: #E97300;color: white; text-align: left; font-family:Arial; font-size:13px;">
+                               <td><strong>Descuento</strong></td>
+                               <td class="text-right">
+                                   <span t-esc="o.getTotalDiscount()" t-esc-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                               </td>
+                              </tr>
+                              <tr t-foreach="o.tax_line_ids" t-as="t" style="line-height:12px; max-height:11px; font-size:13px !important; background-color: #E97300;color: white; text-align: left; font-family:Arial;">
+                                 <td><span t-field="t.tax_id.description"/></td>
+                                 <td class="text-right">
+                                     <span t-esc="t.amount if t.amount &gt; 0 else t.base" t-esc-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: &quot;o.currency_id&quot;}"/>
+                                 </td>
+                              </tr>
+                              <tr style="line-height:12px; max-height:12px; font-size:13px !important;background-color: #E97300;color: white; text-align: left; font-family:Arial; border-radius: 7px 70px 7px 7px;">
+                                  <td><strong>Total</strong></td>
+                                  <td class="text-right">
+                                       <span t-field="o.amount_total" t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                  </td>
+                              </tr>
+                          </table>
+                      </div>
+                    </div>
+                 </div>
+              </div>
+              <div class="footer" style="text-align: center; height:30px; width:100%">
+              	<span style="text-align: center; color:gray; font-family:Arial; font-size:9px;">Gracias por Preferirnos, somos un equipo de profesionales que trabajamos para proveer soluciones de Calidad Sustentable en ENERGIA y CONSTRUCCION
+              	</span><br/>
+              	<span style="text-align: center; color:gray; font-family:Arial; font-size:9px;">www.eergymas.cl | www.eergyhaus.cl | www.eergygroup.cl
+              	</span>
+              	<t t-if="cedible">
+              		<h6 class="pull-right">CEDIBLE</h6>
+              	</t>
+              </div>
+       </template>
+
+
+      <template name="web.external_layout_clean" id="web.external_layout_clean">
+        <style>
+          .o_clean_header img {
+                    max-width: 200px;
+                    width: 200px;
+          }
+          .o_report_layout_clean table thead tr th.prod_descr {
+              width: 48% !important;
+          }
+        </style>
+        <div class="header o_clean_header">
+            <div class="row">
+              <div class="col-xs-3">
+                  <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="width: 200px;"/>
+              </div>
+              <div class="col-xs-7" name="company_address">
+                <ul class="list-unstyled">
+                  <strong><li t-if="company.name"><span t-field="company.name"/></li></strong>
+                  <li t-if="company.vat"><t t-esc="company.country_id.vat_label or 'RUT'"/>: <span t-field="company.partner_id.document_number"/></li>
+                  <li t-if="company.phone">TEL: <span t-field="company.phone"/></li>
+                  <li><span t-field="company.partner_id.street" /> - <span t-field="company.partner_id.city_id" /></li>
+                </ul>
+              </div>
+            </div>
+        </div>
+
+        <div class="article o_report_layout_clean">
+          <t t-raw="0"/>
+        </div>
+
+        <div class="footer o_clean_footer">
+            <div class="row mt8">
+              <div class="col-xs-3" style="padding-right:0px !important; padding-left:10px !important; ">
+                <i class="fa fa-phone" style="padding-right:5px !important;" /> <span t-field="company.phone" />
+              </div>
+              <div class="col-xs-3" style="padding-right:0px !important; padding-left:5px !important;">
+                <i class="fa fa-at" style="padding-right:5px !important;" /> <span t-field="company.email" />
+              </div>
+              <div class="col-xs-4" style="padding-right:0px !important; padding-left:10px !important;">
+                <i class="fa fa-globe"  style="padding-right:0px !important;"/> <span t-field="company.website" />
+              </div>
+              <div class="col-xs-2" style="padding-right:0px !important; padding-left:5px !important;">
+                <i class="fa fa-building-o"  style="padding-right:5px !important;"/>TIN:<span t-field="company.vat" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-1" style="margin:auto;">
+                  <ul class="list-inline pagenumber pull-right text-center">
+                      <li><strong><span class="page"/></strong></li>
+                  </ul>
+              </div>
+            </div>
+        </div>
+    </template>
+
+   
+  <template id="l10n_cl_stock_picking.dte_stock_picking" name="l10n_cl_stock_picking.dte_stock_picking" inherit_id="stock.report_picking" >
+      <t t-call="web.html_container" position="replace">
+          <t t-foreach="docs" t-as="o">
+            <t t-set="partner_id" t-value="o.partner_id or o.company_id.partner_id" />
+              <t  t-lang="partner_id.lang">
+                <!-- Multicompany -->
+                  <t t-if="not o and doc">
+                        <t t-set="o" t-value="doc"/>
+                    </t>
+                    <t t-if="o and 'company_id' in o">
+                        <t t-set="company" t-value="o.company_id"></t>
+                    </t>
+                    <t t-if="not o or not 'company_id' in o">
+                        <t t-set="company" t-value="res_company"></t>
+                  </t>
+                  <t t-if="'picking_type_id' in o and o.location_id.sii_document_class_id">
+                    <t t-set="document_class_id" t-value="o.location_id.sii_document_class_id"/>
+                  </t>
+                    <div class="header">
+                      <div class="row">
+                          <div class="col-xs-6">
+                              <p style="text-align:left;text-transform:uppercase;font-weight:900;font-size:15px;color:black;">
+                                  <span t-field="o.company_id.partner_id.ref"/>
+                              </p>
+                          </div>
+                      </div>
+                      <div class="row">
+                          <div class="col-xs-7" style="width:505px !important;  margin-top: 50px;">
+                              <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % to_text(company.logo)" style="width: 200px; margin-top: -60px; margin-bottom: -60px; max-width: 200px !important; max-height: 200px !important;"/>
+                              <h5 style="text-align:lef;text-transform:uppercase;font-weight:900;font-size:15px;color:black;">
+                                  <span t-field="o.company_id.partner_id.name"/>
+                              </h5>
+                              <p style="text-align:left;font-size:12px;color:black;">
+                                <t t-if="'activity_description' in o.company_id and o.company_id.activity_description" >
+                                  <span t-field="o.company_id.activity_description.name" style="color:black;"/><br />
+                                </t>
+                                  <!-- domicilios -->
+                                  <span t-field="o.company_id.partner_id.street"/>, <span t-field="o.company_id.partner_id.city_id.name"/>, <span t-field="o.company_id.partner_id.city"/><br />
+                                  <!-- domicilios -->
+                                  <span> Teléfono: <span t-field="o.company_id.partner_id.phone"/></span><br/>
+                                  <span>E-Mail: <span t-field="o.company_id.partner_id.email"/></span><br/>
+                                  <span t-field="o.company_id.partner_id.website"/>
+                              </p>
+                          </div>
+                          <div class="col-xs-5">
+                              <div style="position:relative;left:-25px;border: 3px solid red;text-align: center;font-size:20px;padding-bottom:0px !important; height:170px; width:370px;">
+                                <h6 style="color:red;font-size:25px;padding-bottom:10px; padding-top:5px; font-family:Arial;">
+                                    R.U.T.: <span t-field="o.company_id.partner_id.document_number"/>
+                                </h6>
+                                <h6 name="document_class_id" t-if="document_class_id" style="line-height:30px;font-size:23px;color:red;text-align:center;text-transform:uppercase;font-family:Arial;">
+                                   <span t-field="document_class_id.name"/>
+                                </h6>
+                                <h6 t-if="'sii_document_number' in o and o.sii_document_number" style="color: red;text-align: center;font-size:20px;font-family:Arial;">
+                                    N° <span  t-field="o.sii_document_number"/>
+                                </h6>
+                                <br/>
+                            </div>
+                            <div  class="row" style="text-align: center; margin-top:0px !important; padding-top:0px!important;">
+                                <h6 style="color:red;text-align:center;font-size:15px;text-transform:uppercase;">
+                                    SII - <span t-field="o.company_id.sii_regional_office_id.name"/>
+                                </h6>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="row" style="display:none !important;">
+                        <div name="company_address"/>
+                      </div>
+                  </div>
+              <div class="article">
+                <div class="page" style="padding-top:60px;">
+                    <div class="row" style="border: 2px solid black;">
+                        <table class="table cl_invoice">
+                          <tbody>
+                            <tr>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong >Señor (es):</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;min-width:500px;max-width:500px;"><span t-field="partner_id.commercial_partner_id.name"/></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Fecha:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><t t-if="'scheduled_date' in o and o.scheduled_date"><span t-field="o.scheduled_date"/></t></td>
+                            </tr>
+                            <tr>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>RUT:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;min-width:500px;max-width:500px;"><span t-field="partner_id.commercial_partner_id.document_number"/></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong >Comuna:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><span t-field="partner_id.commercial_partner_id.city_id.name"/></td>
+                            </tr>
+                            <tr>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Domicilio:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;min-width:500px;max-width:500px;"><span  t-field="partner_id.commercial_partner_id.street"/><span t-field="partner_id.commercial_partner_id.street2"/></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong >Ciudad:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><span t-field="partner_id.commercial_partner_id.city"/></td>
+                            </tr>
+                            <tr>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Giro:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;min-width:500px;max-width:500px;"><span t-field="o.activity_description.name"/></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Condición de Pago:</strong></td>
+                            </tr>
+                            <tr>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Contacto:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;min-width:500px;max-width:500px;"><t t-if="'contact_id' in o and o.contact_id"><span t-field="o.contact_id.name"/></t></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><strong>Vencimiento:</strong></td>
+                              <td style="border-top:0px !important;padding:4px !important;"><span t-field="o.scheduled_date"/></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <div style="min-height:350px; max-height:350px;" >
+                        <div t-if="'reference' in o and o.reference">
+                          <span> Documento de Referencia</span>
+                          <div class="row" style="border: 2px solid black; min-height:50px;" name="reference">
+                            <table class="table table-condensed">
+                              <thead>
+                                <th>
+                                  <strong>Folio:</strong>
+                                </th>
+                                <th>
+                                  <strong>Reference:</strong>
+                                </th>
+                                <th>
+                                  <strong>Fecha:</strong>
+                                </th>
+                              </thead>
+                              <tbody >
+                                <t  t-foreach="o.reference" t-as="l">
+                                    <tr>
+                                      <td  style="border-top:0px !important;padding:4px !important;">
+                                            <span t-if="l.origen" t-field="l.origen"/>
+                                        </td>
+                                      <td style="border-top:0px !important;padding:4px !important;">
+                                          <span t-if="l.sii_referencia_TpoDocRef" t-field="l.sii_referencia_TpoDocRef.name"/>
+                                      </td>
+                                      <td style="border-top:0px !important;padding:4px !important;">
+                                          <span t-if="l.date" t-field="l.date"/>
+                                      </td>
+                                  </tr>
+                                </t>
+                            </tbody>
+                              </table>
+                        </div>
+                      </div>
+                    <!-- Is there a discount on at least one line? -->
+                     <table class="table table-condensed" >
+                         <thead style="font-size: 12px;">
+                             <tr>
+                                <th>Cantidad</th>
+                                <th>Descripción</th>
+                                <th class="text-right">Precio Unitario</th>
+                                <th t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">Desc.(%)</th>
+                                <th class="text-right">Precio</th>
+                             </tr>
+                         </thead>
+                         <tbody class="invoice_tbody" style="font-size: 10px !important;">
+                             <tr t-foreach="o.move_lines.sorted(key=lambda m: m.product_id.id)" t-as="l">
+                                 <td>
+                                     <span t-field="l.quantity_done"/>
+                                     <span t-field="l.product_uom"  groups="product.group_uom"/>
+                                 </td>
+                                 <td><span t-field="l.product_id.name"/> <t t-if="l.product_id.name != l.name"><span t-field="l.product_id.name"/></t></td>
+                                 <td class="text-right">
+                                     <span t-field="l.precio_unitario" t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                 </td>
+                                 <td t-if="display_discount" class="text-right" groups="sale.group_discount_per_so_line">
+                                     <span t-field="l.discount"/>
+                                 </td>
+                                 <td class="text-right" t-if="'subtotal' in l">
+                                     <span t-field="l.subtotal"
+                                         t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                 </td>
+                             </tr>
+                         </tbody>
+                     </table>
+                   </div>
+                   <div class="row" style="border:1px solid black; height:30px;" >
+                     <table class="table table-condensed" style="height:30px;">
+                             <thead>
+                               <tr style="max-height:10px; font-size:9px !important;">
+                                 <th >Nombre </th>
+                                 <th > RUT </th>
+                                 <th name="td_sched_date_h">Patente</th>
+                                 <th >Traslado</th>
+                               </tr>
+                             </thead>
+                             <tbody>
+                               <tr style="max-height:9px; font-size:8px !important;">
+                                 <td><span t-field="o.chofer.name" /></td>
+                                 <td><span t-field="o.chofer.document_number"/></td>
+                                 <td   name="td_sched_date"><span t-field="o.patente"/></td>
+                                 <td><span t-field="o.move_reason"/></td>
+                               </tr>
+                              </tbody>
+                     </table>
+                     <table  t-if="partner_id.type in ['delivery', 'other']" class="table table-condensed" style="height:30px;">
+                             <thead>
+                               <tr style="max-height:10px; font-size:9px !important;">
+                                 <th>Dirección de Envío</th>
+                                 <th>Ciudad</th>
+                               </tr>
+                             </thead>
+                             <tbody>
+                               <tr style="max-height:9px; font-size:8px !important;">
+                                 <td><span t-field="partner_id.street"/></td>
+                                 <td><span t-field="partner_id.city"/></td>
+                               </tr>
+                              </tbody>
+                     </table>
+                   </div>
+                   <br />
+                     <div class="row" style="padding-top:10px;">
+                             <div class="col-xs-5">
+                               <div class="col-xs-12">
+                                  <span t-field="o.sii_barcode_img" t-field-options="{&quot;widget&quot;: &quot;image&quot;}"/>
+                               </div>
+                               <div class="col-xs-12">
+                                   <p style="text-align:center;color:red; font-size:8px;">
+                                     Timbre Electrónico SII
+                                     <br/>
+                                     Resolución 393/2016 Verifique documento: www.sii.cl
+                                   </p>
+                               </div>
+                             </div>
+                             <div class="col-xs-7">
+                               <div class="col-xs-4 pull-right">
+                                     <table class="table table-condensed">
+                                         <tr class="border-black" t-if="'global_discount' in o">
+                                           <td><strong>Descuento</strong></td>
+                                           <td class="text-right">
+                                               <span t-field="o.global_discount" t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                           </td>
+                                       </tr>
+                                         <tr t-if="'subtotal' in o">
+                                             <td><strong>Subtotal</strong></td>
+                                             <td class="text-right">
+                                                 <span t-field="o.amount_untaxed" t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                             </td>
+                                         </tr>
+                                       <t t-if="'tax_line_ids' in o">
+                                        <tr  t-foreach="o.tax_line_ids" t-as="t">
+                                            <td><span t-field="t.name"/></td>
+                                            <td class="text-right">
+                                              <span t-field="t.amount"
+                                                 t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                            </td>
+                                        </tr>
+                                      </t>
+                                         <tr class="border-black" t-if="'amount_total' in o">
+                                             <td><strong>Total</strong></td>
+                                             <td class="text-right">
+                                                  <span t-field="o.amount_total" t-field-options='{"widget": "monetary", "display_currency": "o.currency_id"}'/>
+                                             </td>
+                                         </tr>
+                                     </table>
+                                 </div>
+                               <div class="row">
+                                <div class="col-xs-12" style="border: 1px solid black;height:20px;font-size:15px !important;">
+                                  <div class="col-xs-4">
+                                      <strong>Nombre:</strong>
+                                  </div>
+                                </div>
+                                <div class="col-xs-12" style="border: 1px solid black;height:20px;font-size:15px !important;">
+                                  <div class="col-xs-7">
+                                      <strong>R.U.T.:</strong>
+                                  </div>
+                                  <div class="col-xs-5">
+                                      <strong>FECHA:</strong>
+                                  </div>
+                                </div>
+                                <div class="col-xs-12" style="border: 1px solid black;height:20px; font-size:15px !important;">
+                                  <div class="col-xs-7">
+                                      <strong>RECINTO:</strong>
+                                  </div>
+                                  <div class="col-xs-5">
+                                      <strong>FIRMA:</strong>
+                                  </div>
+                                </div>
+                                <div class="col-xs-12" style="border: 1px solid black;">
+                                  <p style="font-size:8px">
+                                    "El acuse de recibo que se declara en este acto, de acuerdo a lo dispuesto en la letra b) del Artículo 4°, y la letra c) del Artículo 5° de la Ley 19.983, acredita que la entrega de mercaderías o servicio(s) prestado(s) ha(n) sido recibido(s)"
+                                  </p>
+                                </div>
+                              </div>
+                              <div class="row">
+                                 <h6 class="pull-right" t-if="cedible"> CEDIBLE CON SU FACTURA</h6>
+                              </div>
+                            </div>
+                      </div>
+                    </div>
+              </div>
+          </t>
+      </t>
+  </t>
+</template>
+
+</odoo>
